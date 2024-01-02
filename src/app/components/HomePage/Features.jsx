@@ -18,7 +18,7 @@ export default function Features() {
     return (
         <MaxWidthWrapper>
             <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10"
+                className="flex flex-col sm:flex-row gap-10"
                 variants={sectionVariants}
                 initial="hidden"
                 animate="visible"

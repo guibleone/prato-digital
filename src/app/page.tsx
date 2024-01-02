@@ -17,9 +17,7 @@ export default function Home() {
       <section className="bg-gray-100 py-20">
         <Features />
       </section>
-
-
-
+      
     </main>
   )
 }
