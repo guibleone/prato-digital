@@ -55,7 +55,7 @@ export default function TopRecipes() {
                     className='flex justify-center mt-12'>
                     <Button asChild>
                         <Link href='/receitas'>
-                            Ver todas as receitas
+                            Ver Todas
                         </Link>
                     </Button>
                 </motion.div>
