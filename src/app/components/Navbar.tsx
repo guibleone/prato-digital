@@ -7,9 +7,22 @@ import { Button } from '@/components/ui/button'
 import Drawer from '@/components/ui/drawer'
 import { links } from '@/lib/definitions'
 import { BookOpenText, Heart, Home } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+  
 
 
 export default function Navbar() {
+
+    const { data } = useSession()
+    const user = data?.user
 
     const [matches, setMatches] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -58,7 +71,34 @@ export default function Navbar() {
                                     </span>
                                 </Link>
                             ))}
-                            <Button variant='default'>Entrar</Button>
+                            {!user ? (
+                                <Button variant='default' asChild>
+                                    <Link href='/api/auth/signin'>Entrar</Link>
+                                </Button>) : (
+                                        <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            <Image className='rounded-full' src={user.image!} width={30} height={30} alt="user" />
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                          <DropdownMenuLabel>
+                                            <span className='text-gray-900 text-sm'>
+                                                {user.name!}
+                                            </span>
+                                          </DropdownMenuLabel>
+                                          <DropdownMenuSeparator />
+                                          <DropdownMenuItem>
+                                            <Link href='/dashboard'>Dashboard</Link>
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem>
+                                            <Button className='w-full h-8' variant='default' asChild>
+                                                <Link href='/api/auth/signout'>Sair</Link>
+                                            </Button>
+                                          </DropdownMenuItem>
+
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                            )}
+
                         </div>) : (
 
                         <>
@@ -70,28 +110,46 @@ export default function Navbar() {
                                     <h1 className='text-gray-900 font-bold text-lg'>
                                         Menu
                                     </h1>
+                                    {user && (
+                              
+                                            <Link className='border-b flex gap-2 items-center font-medium border-gray-900 pb-2' href={'/dashboard'} >
+                                                <Image className='rounded-full' src={user.image!} width={25} height={25} alt="user" />
+                                                <span className='text-gray-900 text-sm'>
+                                                    Dashboard
+                                                </span>
+                                            </Link>
+                                       
+                                    )}
                                     <Link className='border-b flex gap-2 items-center font-medium border-gray-900 pb-2' href={'/'} >
                                         <Home size={25} />
-                                        <span className='text-gray-900  hover:text-gray-400'>
+                                        <span className='text-gray-900 text-sm  hover:text-gray-400'>
                                             Início
                                         </span>
                                     </Link>
 
                                     <Link className='border-b flex gap-2 items-center font-medium border-gray-900 pb-2' href={'/receitas'} >
                                         <BookOpenText size={25} />
-                                        <span className='text-gray-900  hover:text-gray-400'>
+                                        <span className='text-gray-900 text-sm  hover:text-gray-400'>
                                             Receitas
                                         </span>
                                     </Link>
 
                                     <Link className='border-b flex gap-2 items-center font-medium border-gray-900 pb-2' href={'/favoritos'} >
                                         <Heart size={25} />
-                                        <span className='text-gray-900  hover:text-gray-400'>
+                                        <span className='text-gray-900 text-sm  hover:text-gray-400'>
                                             Favoritos
                                         </span>
                                     </Link>
 
-                                    <Button variant='default'>Entrar</Button>
+                                    {!user ? (
+                                        <Button variant='default' asChild>
+                                            <Link href='/api/auth/signin'>Entrar</Link>
+                                        </Button>
+                                    ) : (
+                                        <Button variant='default' asChild>
+                                            <Link href='/api/auth/signout'>Sair</Link>
+                                        </Button>
+                                    )}
                                 </div>
                             </Drawer>
                         </>

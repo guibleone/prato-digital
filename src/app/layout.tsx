@@ -3,6 +3,7 @@ import './globals.css'
 import { inter, barlow } from './fonts'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import AuthProvider from './components/SessionProvider'
 
 export const metadata: Metadata = {
   title: 'Prato Digital',
@@ -15,6 +16,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    <AuthProvider>
     <html lang="pt-BR">
       <body suppressHydrationWarning={true} className={inter.className}>
         <Navbar />
@@ -22,5 +24,6 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
+    </AuthProvider>
   )
 }

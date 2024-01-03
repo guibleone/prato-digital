@@ -28,10 +28,10 @@ const itemVariants = {
 export default function TopRecipes() {
     return (
         <section className='py-20' >
-            <MaxWidthWrapper>
+            <MaxWidthWrapper className="max-w-screen-lg px-8">
                 <div className='mb-8'>
                     <h1 className='text-2xl font-bold text-center'>Principais Receitas</h1>
-                    <p className='text-sm text-muted-foreground text-center'>Veja as receitas mais populares do nosso site</p>
+
                 </div>
                 <motion.div
                     variants={containerVariants}
