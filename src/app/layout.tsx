@@ -4,6 +4,7 @@ import { inter, barlow } from './fonts'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import AuthProvider from './components/SessionProvider'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Prato Digital',
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true} className={inter.className}>
         <Navbar />
         {children}
+        <Toaster />
         <Footer />
       </body>
     </html>

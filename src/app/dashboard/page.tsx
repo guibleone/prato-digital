@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { redirect } from "next/navigation";
 import MaxWidthWrapper from '../components/MaxWidthWrapper';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import CardRecipeDashboard from '../components/CardRecipeDashboard';
 import Image from 'next/image';
+import { fetchUserRecipes, getCurrentUser } from '@/lib/data';
 
 export default async function page() {
 
@@ -14,6 +15,10 @@ export default async function page() {
     if (!session) {
         redirect('/api/auth/signin')
     }
+
+    const currentUser = await getCurrentUser()
+    const recipes = await fetchUserRecipes(currentUser?.id!)
+
 
     return (
         <main >
@@ -25,15 +30,15 @@ export default async function page() {
                                 Suas Receitas
                             </h1>
                             <Button asChild>
-                                <Link href="/dashboard/receitas/nova">
+                                <Link href="/dashboard/receitas/criar">
                                     Nova Receita <Plus className='ml-2' />
                                 </Link>
                             </Button>
                         </div>
-                        <div className='flex flex-col justify-between sm:flex-row gap-10 px-8 sm:px-0'>
-                            <CardRecipeDashboard />
-                            <CardRecipeDashboard />
-                            <CardRecipeDashboard />
+                        <div className='grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 px-8 sm:px-0'>
+                            {recipes?.map((recipe: any) => (
+                                <CardRecipeDashboard key={recipe.id} recipe={recipe} />
+                            ))}
 
                         </div>
                     </div>
@@ -47,7 +52,7 @@ export default async function page() {
                             <h1 className='font-bold text-gray-900 text-2xl sm:text-4xl'>
                                 Você é um cozinheiro de <span className='bg-yellow-500 text-gray-100 px-3.5'>mão cheia</span>
                             </h1>
-                
+
                             <p className='text-muted-foreground mt-4'>
                                 (200 avaliações) nos últimos 30 dias
                             </p>

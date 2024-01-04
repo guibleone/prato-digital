@@ -3,25 +3,25 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL") 
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
   refresh_token_expires_in Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -39,11 +39,41 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  bio           String? @db.Text
+  bio           String?   @db.Text
   age           Int?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  recipes       Recipe[]
+  rewiewes      Rewiew[]
 }
+
+model Recipe {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  isPublished  Boolean  @default(false)
+  ingredients  String[]
+  instructions String[]
+  rewiwes      Rewiew[]
+  image        String?
+  author       User     @relation(fields: [authorId], references: [id])
+  authorId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Rewiew {
+  id        String  @id @default(cuid())
+  text      String
+  rating    Int
+  recipe    Recipe  @relation(fields: [recipeId], references: [id])
+  recipeId  String
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
