@@ -40,8 +40,8 @@ export default function TopRecipes({ recipes }: { recipes: any[] }) {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
-                    className='flex flex-col justify-between sm:flex-row gap-10'>
-                    <motion.div variants={itemVariants}>
+                >
+                    <motion.div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10' variants={itemVariants}>
                         {recipes.map((recipe) => (
                             <CardRecipe key={recipe.id} recipe={recipe} />
                         ))}
