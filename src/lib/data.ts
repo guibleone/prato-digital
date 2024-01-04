@@ -52,6 +52,14 @@ export const fetchRecipeById = async (recipeId: string) => {
       where: {
         id: recipeId,
       },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true
+          }
+        }
+      }
     });
     return recipe;
   } catch (error: any) {
