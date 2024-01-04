@@ -6,6 +6,8 @@ import MaxWidthWrapper from '../MaxWidthWrapper'
 import CardRecipe from '../CardRecipe'
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { fetchTopRecipes } from "@/lib/data";
+import { Recipe } from "@prisma/client";
 
 
 const containerVariants = {
@@ -25,7 +27,7 @@ const itemVariants = {
 };
 
 
-export default function TopRecipes() {
+export default function TopRecipes({ recipes }: { recipes: any[] }) {
     return (
         <section className='py-20' >
             <MaxWidthWrapper className="max-w-screen-lg px-8">
@@ -40,14 +42,11 @@ export default function TopRecipes() {
                     viewport={{ once: true }}
                     className='flex flex-col justify-between sm:flex-row gap-10'>
                     <motion.div variants={itemVariants}>
-                        <CardRecipe />
+                        {recipes.map((recipe) => (
+                            <CardRecipe key={recipe.id} recipe={recipe} />
+                        ))}
                     </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <CardRecipe />
-                    </motion.div>
-                    <motion.div variants={itemVariants}>
-                        <CardRecipe />
-                    </motion.div>
+
 
                 </motion.div>
                 <motion.div

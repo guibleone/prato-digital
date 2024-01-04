@@ -55,3 +55,22 @@ export const fetchRecipeById = async (recipeId: string) => {
     return null;
   }
 }
+
+
+// pegar as tres principais receitas
+
+export const fetchTopRecipes = async () => {
+  try {
+    const recipes = await prisma.recipe.findMany({
+      where: {
+        isPublished: true,
+      },
+      take: 3,
+    });
+
+    return recipes
+
+  } catch (error: any) {
+    return null;
+  }
+}

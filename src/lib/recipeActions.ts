@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import {getCurrentUser} from "./data";
+import { getCurrentUser } from "./data";
 import { prisma } from "./db";
 
 const FormSchema = z.object({
@@ -62,7 +62,7 @@ export async function createRecipe(prevState: State, formData: FormData) {
                 ingredients,
                 instructions: instructions.split('\n'),
                 isPublished,
-                authorId: cuurentUser.id 
+                authorId: cuurentUser.id
             }
         });
         console.log('Recipe Created!');
@@ -79,5 +79,78 @@ export async function createRecipe(prevState: State, formData: FormData) {
 }
 
 export async function editRecipe(recipeId: string, prevState: State, formData: FormData) {
+    const validatedFields = FormSchema.safeParse({
+        title: formData.get("title"),
+        description: formData.get("description"),
+        ingredients: formData.getAll("ingredients"),
+        instructions: formData.get("instructions"),
+    });
 
+    const isPublished = formData.get('isPublished') === 'on' ? true : false;
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Create Task.',
+        };
+    }
+
+    const { title, description, ingredients, instructions } = validatedFields.data;
+
+    const cuurentUser = await getCurrentUser();
+
+    if (!cuurentUser?.id || !cuurentUser?.email) {
+        return {
+            errors: {
+                message: 'User not found. Failed to Create Task.',
+            }
+        };
+    }
+
+    try {
+        await prisma.recipe.update({
+            where: {
+                id: recipeId,
+            },
+            data: {
+                title,
+                description,
+                ingredients,
+                instructions: instructions.split('\n'),
+                isPublished,
+            }
+        });
+
+    }
+
+    catch (error) {
+        console.error('Database Error:', error);
+        return {
+            message: 'Database Error: Failed to Create Task.',
+        };
+    }
+
+    revalidatePath('/dashboard');
+    redirect('/dashboard');
+
+}
+
+export async function deleteRecipe(recipeId: string) {
+    console.log('Deleting Recipe...');
+    console.log(recipeId);
+    try {
+        await prisma.recipe.delete({
+            where: {
+                id: recipeId,
+            },
+        });
+    } catch (error) {
+        console.error('Database Error:', error);
+        return {
+            message: 'Database Error: Failed to Delete Task.',
+        };
+    }
+
+    revalidatePath('/dashboard');
+    redirect('/dashboard');
 }

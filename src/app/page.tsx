@@ -1,10 +1,13 @@
+import { fetchTopRecipes } from "@/lib/data";
 import Features from "./components/HomePage/Features";
 import Hero from "./components/HomePage/Hero";
 import TopRecipes from "./components/HomePage/TopRecipes";
 import MaxWidthWrapper from "./components/MaxWidthWrapper";
 
 
-export default function Home() {
+export default async function Home() {
+  const recipes = await fetchTopRecipes();
+
   return (
     <main>
 
@@ -19,7 +22,8 @@ export default function Home() {
       </section>
 
       {/* Top Recipes */}
-      <TopRecipes />
+      {/*@ts-ignore */}
+      <TopRecipes recipes={recipes} />
 
       <section className="bg-gray-900 py-20">
         <MaxWidthWrapper>

@@ -1,47 +1,14 @@
-import { getServerSession } from 'next-auth'
-import React, { useEffect } from 'react'
-import { redirect } from "next/navigation";
 import MaxWidthWrapper from '../components/MaxWidthWrapper';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Plus } from 'lucide-react';
-import CardRecipeDashboard from '../components/CardRecipeDashboard';
 import Image from 'next/image';
-import { fetchUserRecipes, getCurrentUser } from '@/lib/data';
+import RecipesDashboard from '../components/Dasboard/Recipes';
 
-export default async function page() {
-
-    const session = await getServerSession()
-    if (!session) {
-        redirect('/api/auth/signin')
-    }
-
-    const currentUser = await getCurrentUser()
-    const recipes = await fetchUserRecipes(currentUser?.id!)
-
-
+export default function page() {
     return (
-        <main >
-            <section className='py-20'>
+        <main>
+            {/** suas receitas */}
+            <section className='py-10 sm:py-20'>
                 <MaxWidthWrapper>
-                    <div className='flex flex-col gap-10'>
-                        <div className='flex justify-between'>
-                            <h1 className='font-bold text-2xl sm:text-4xl'>
-                                Suas Receitas
-                            </h1>
-                            <Button asChild>
-                                <Link href="/dashboard/receitas/criar">
-                                    Nova Receita <Plus className='ml-2' />
-                                </Link>
-                            </Button>
-                        </div>
-                        <div className='grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 px-8 sm:px-0'>
-                            {recipes?.map((recipe: any) => (
-                                <CardRecipeDashboard key={recipe.id} recipe={recipe} />
-                            ))}
-
-                        </div>
-                    </div>
+                    <RecipesDashboard />
                 </MaxWidthWrapper>
             </section>
 

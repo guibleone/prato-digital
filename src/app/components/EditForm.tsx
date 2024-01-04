@@ -13,8 +13,9 @@ export default function EditForm({ recipe }: { recipe: Recipe | null }) {
 
     const initialState = { message: null, errors: {} };
 
-    // @ts-ignore
-    const [state, dispatch] = useFormState(editRecipe, initialState)
+    const updateRecipeWithId = editRecipe.bind(null, recipe?.id!)
+      // @ts-ignore
+    const [state, dispatch] = useFormState(updateRecipeWithId, initialState)
 
     const { toast } = useToast()
 
@@ -142,7 +143,7 @@ export default function EditForm({ recipe }: { recipe: Recipe | null }) {
             </div>
             <div>
                 <Button type='submit'>
-                    Criar Receita
+                    Editar Receita
                 </Button>
             </div>
         </form>
