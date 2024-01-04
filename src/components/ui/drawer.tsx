@@ -60,7 +60,6 @@ const Drawer: React.FC<DrawerProps> = ({ width = 270, children }) => {
 
       {/* The element that animates in and out */}
       <motion.div
-  
         className="fixed top-0 bottom-0 z-30"
         initial="closed"
         animate={isOpen ? "open" : "closed"}
@@ -70,7 +69,7 @@ const Drawer: React.FC<DrawerProps> = ({ width = 270, children }) => {
         {/* Adds a "card-like" look to the drawer */}
         <div
           style={{ width }}
-          className="bg-white border border-gray-300 p-4 h-full -ml-3 select-text"
+          className="bg-white  p-4 h-full -ml-4 select-text"
         >
           {/* Aligns the close button to the end */}
           <div className="flex items-center justify-end">
