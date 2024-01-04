@@ -1,5 +1,6 @@
 import { prisma } from "./db";
 import { getServerSession } from "next-auth";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const getCurrentUser = async () => {
   try {
@@ -29,6 +30,7 @@ export const getCurrentUser = async () => {
 // pegar receitas do usuario
 
 export const fetchUserRecipes = async (userId: string) => {
+  noStore()
   try {
     const recipes = await prisma.recipe.findMany({
       where: {
@@ -44,6 +46,7 @@ export const fetchUserRecipes = async (userId: string) => {
 }
 
 export const fetchRecipeById = async (recipeId: string) => {
+  noStore()
   try {
     const recipe = await prisma.recipe.findUnique({
       where: {
@@ -60,6 +63,7 @@ export const fetchRecipeById = async (recipeId: string) => {
 // pegar as tres principais receitas
 
 export const fetchTopRecipes = async () => {
+  noStore()
   try {
     const recipes = await prisma.recipe.findMany({
       where: {
