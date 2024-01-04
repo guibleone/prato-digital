@@ -82,7 +82,7 @@ export default function Navbar() {
                                         <DropdownMenuContent>
                                           <DropdownMenuLabel>
                                             <span className='text-gray-900 text-sm'>
-                                                {user.name!}
+                                                {user.name!.split(' ')[0] + ' ' + user.name?.split(' ')[user?.name!.split(' ').length - 1]}
                                             </span>
                                           </DropdownMenuLabel>
                                           <DropdownMenuSeparator />

@@ -1,10 +1,11 @@
 import MaxWidthWrapper from '../components/MaxWidthWrapper';
 import Image from 'next/image';
 import RecipesDashboard from '../components/Dasboard/Recipes';
-
 export default function page() {
+
     return (
         <main>
+
             {/** suas receitas */}
             <section className='py-10 sm:py-20'>
                 <MaxWidthWrapper>
@@ -17,7 +18,7 @@ export default function page() {
                     <div className='flex flex-col text-center sm:text-start sm:flex-row sm:justify-between items-center'>
                         <div>
                             <h1 className='font-bold text-gray-900 text-2xl sm:text-4xl'>
-                                Você é um cozinheiro de <span className='bg-yellow-500 text-gray-100 px-3.5'>mão cheia</span>
+                                Você é um cozinheiro de <span className='bg-yellow-500 text-nowrap text-gray-100 px-3.5'>mão cheia</span>
                             </h1>
 
                             <p className='text-muted-foreground mt-4'>

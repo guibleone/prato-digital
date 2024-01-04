@@ -35,6 +35,7 @@ export default function CreateRecipe() {
             description: 'Por favor, remova um ingrediente para adicionar outro',
         })
         setIngredients([...ingredients, ingredient])
+        
     }
 
     return (

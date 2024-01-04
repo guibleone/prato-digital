@@ -30,7 +30,7 @@ const itemVariants = {
 export default function TopRecipes({ recipes }: { recipes: any[] }) {
     return (
         <section className='py-20' >
-            <MaxWidthWrapper className="max-w-screen-lg px-8">
+            <MaxWidthWrapper className="max-w-screen-lg">
                 <div className='mb-8'>
                     <h1 className='text-2xl font-bold text-center'>Principais Receitas</h1>
 

@@ -86,3 +86,72 @@ export const fetchTopRecipes = async () => {
     return null;
   }
 }
+
+// pegar receitas por página
+
+const ITENS_PER_PAGE = 4;
+export async function fetchFilteredRecipes(
+  query: string,
+  currentPage: number,
+) {
+  noStore()
+  const offset = (currentPage - 1) * ITENS_PER_PAGE;
+
+  try {
+    const recipes = await prisma.recipe.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            description: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+        isPublished: true,
+      },
+      take: ITENS_PER_PAGE,
+      skip: offset,
+    });
+    return recipes;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function fetchRecipesPages(query: string) {
+  noStore()
+  try {
+    const recipesCount = await prisma.recipe.count({
+      where: {
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            description: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+        isPublished: true,
+      },
+    });
+
+    const totalPages = Math.ceil(recipesCount / ITENS_PER_PAGE);
+    return totalPages;
+
+  } catch (error) {
+    return null;
+  }
+}
