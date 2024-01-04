@@ -27,7 +27,7 @@ export default async function EditPage({ params }: { params: { id: string } }) {
                         </Button>
                     </div>
                     <EditForm recipe={recipe} />
-                    <div className='mt-2'>
+                    <div className='mt-2 flex'>
                         <DeleteButton id={id} />
                     </div>
                 </MaxWidthWrapper>

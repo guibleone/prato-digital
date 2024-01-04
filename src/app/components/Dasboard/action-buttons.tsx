@@ -8,8 +8,8 @@ export function DeleteButton({ id }: { id: string }) {
 
     return (
         <form action={deleteInvoiceWithId} className='flex flex-col gap-10'>
-            <Button variant={'destructive'} >
-                Excluir
+            <Button className="w-full" variant={'destructive'} >
+                <X size={20} className='mr-2' />Excluir 
            </Button>
         </form>
     )

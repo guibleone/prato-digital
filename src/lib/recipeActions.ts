@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "./data";
 import { prisma } from "./db";
+import { storage } from "./firebase";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const FormSchema = z.object({
     title: z.string().min(3, { message: "Título deve ter no mínimo 3 caracteres" }),
@@ -33,44 +35,64 @@ export async function createRecipe(prevState: State, formData: FormData) {
     });
 
     const isPublished = formData.get('isPublished') === 'on' ? true : false;
+    const image = formData.get('image') as File;
+
+    if(!image) {
+        return {
+            errors: {
+                message: 'Imagem não encontrada. Falha ao criar receita.',
+            }
+        };
+    }
 
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: 'Missing Fields. Failed to Create Task.',
+            message: 'Missing Fields. Falha ao criar receita.',
         };
     }
 
     const { title, description, ingredients, instructions } = validatedFields.data;
 
-    const cuurentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
 
-    if (!cuurentUser?.id || !cuurentUser?.email) {
+    if (!currentUser?.id || !currentUser?.email) {
         return {
             errors: {
-                message: 'User not found. Failed to Create Task.',
+                message: 'User not found. Falha ao criar receita.',
             }
         };
     }
 
     try {
-        console.log('Creating Recipe...');
-        await prisma.recipe.create({
+
+        const recipe = await prisma.recipe.create({
             data: {
                 title,
                 description,
                 ingredients,
                 instructions: instructions.split('\n'),
                 isPublished,
-                authorId: cuurentUser.id
+                authorId: currentUser.id,
             }
         });
-        console.log('Recipe Created!');
+
+
+        const url = await uploadImage(image, recipe.id)
+
+        await prisma.recipe.update({
+            where: {
+                id: recipe.id,
+            },
+            data: {
+                image: url ? url as string : null,
+            }
+        });
 
     } catch (error) {
         console.error('Database Error:', error);
         return {
-            message: 'Database Error: Failed to Create Task.',
+            message: 'Database Error: Falha ao criar receita.',
         };
     }
 
@@ -86,28 +108,32 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
         instructions: formData.get("instructions"),
     });
 
+    const image = formData.get('image') as File;
     const isPublished = formData.get('isPublished') === 'on' ? true : false;
 
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: 'Missing Fields. Failed to Create Task.',
+            message: 'Missing Fields. Falha ao criar receita.',
         };
     }
 
     const { title, description, ingredients, instructions } = validatedFields.data;
 
-    const cuurentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
 
-    if (!cuurentUser?.id || !cuurentUser?.email) {
+    if (!currentUser?.id || !currentUser?.email) {
         return {
             errors: {
-                message: 'User not found. Failed to Create Task.',
+                message: 'User not found. Falha ao criar receita.',
             }
         };
     }
 
     try {
+
+        const url = await uploadImage(image, recipeId)
+
         await prisma.recipe.update({
             where: {
                 id: recipeId,
@@ -118,6 +144,7 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
                 ingredients,
                 instructions: instructions.split('\n'),
                 isPublished,
+                image: url ? url as string : null,
             }
         });
 
@@ -126,7 +153,7 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
     catch (error) {
         console.error('Database Error:', error);
         return {
-            message: 'Database Error: Failed to Create Task.',
+            message: 'Database Error: Falha ao criar receita.',
         };
     }
 
@@ -136,9 +163,10 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
 }
 
 export async function deleteRecipe(recipeId: string) {
-    console.log('Deleting Recipe...');
-    console.log(recipeId);
     try {
+        const storageRef = ref(storage, `images/${recipeId}`);
+        await deleteObject(storageRef);
+
         await prisma.recipe.delete({
             where: {
                 id: recipeId,
@@ -153,4 +181,23 @@ export async function deleteRecipe(recipeId: string) {
 
     revalidatePath('/dashboard');
     redirect('/dashboard');
+}
+
+export const uploadImage = async (image: File, recipeId: string) => {
+
+    try {
+        const storageRef = ref(storage, `images/${recipeId}`);
+        await uploadBytes(storageRef, image);
+        const url = await getDownloadURL(storageRef);
+
+        return url;
+
+    } catch (error) {
+        console.error('Firebase Error:', error);
+        return {
+            message: 'Firebase Error: Failed to Upload Image.',
+        };
+    }
+
+
 }

@@ -7,6 +7,7 @@ import { useFormState } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Recipe } from "@prisma/client";
 import { editRecipe } from "@/lib/recipeActions";
+import Image from "next/image";
 
 
 export default function EditForm({ recipe }: { recipe: Recipe | null }) {
@@ -14,7 +15,7 @@ export default function EditForm({ recipe }: { recipe: Recipe | null }) {
     const initialState = { message: null, errors: {} };
 
     const updateRecipeWithId = editRecipe.bind(null, recipe?.id!)
-      // @ts-ignore
+    // @ts-ignore
     const [state, dispatch] = useFormState(updateRecipeWithId, initialState)
 
     const { toast } = useToast()
@@ -133,6 +134,18 @@ export default function EditForm({ recipe }: { recipe: Recipe | null }) {
                             </p>
                         ))}
                     </div>
+                </div>
+                <div className='flex flex-col gap-5'>
+                    <label htmlFor='image' className='font-bold text-gray-900'>
+                        Imagem
+                    </label>
+                    {recipe?.image && <Image src={recipe?.image} alt="recipe" className='object-cover' width={250} height={250} />}
+                    <input
+                        type='file'
+                        name='image'
+                        id='image'
+                        className='border border-gray-300 rounded-lg px-5 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent'
+                    />
                 </div>
                 <div className="flex items-center">
                     <label htmlFor="isPublished" className='font-bold text-gray-900'>

@@ -1,12 +1,10 @@
 'use client'
-
 import { X } from "lucide-react"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { useFormState } from "react-dom";
 import { createRecipe } from "@/lib/recipeActions";
 import { Button } from "@/components/ui/button";
-
 
 export default function CreateRecipe() {
     const initialState = { message: null, errors: {} };
@@ -55,10 +53,10 @@ export default function CreateRecipe() {
                     <div id="title-error" aria-live="polite" aria-atomic="true">
                         {/**@ts-ignore */}
                         {state?.errors?.title && state?.errors.title.map((error: string) => (
-                                <p className="mt-2 text-sm text-red-500" key={error}>
-                                    {error}
-                                </p>
-                            ))}
+                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                {error}
+                            </p>
+                        ))}
                     </div>
                 </div>
                 <div className='flex flex-col gap-5'>
@@ -71,12 +69,12 @@ export default function CreateRecipe() {
                         className='border border-gray-300 rounded-lg px-5 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent'
                     ></textarea>
                     <div id="description-error" aria-live="polite" aria-atomic="true">
-                         {/**@ts-ignore */}
+                        {/**@ts-ignore */}
                         {state?.errors?.description && state?.errors.description.map((error: string) => (
-                                <p className="mt-2 text-sm text-red-500" key={error}>
-                                    {error}
-                                </p>
-                            ))}
+                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                {error}
+                            </p>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -102,12 +100,12 @@ export default function CreateRecipe() {
                     </div>
                     <input type="hidden" name="ingredients" value={ingredients} aria-hidden='true' />
                     <div id="ingredients-error" aria-live="polite" aria-atomic="true">
-                         {/**@ts-ignore */}
+                        {/**@ts-ignore */}
                         {state?.errors?.ingredients && state?.errors.ingredients.map((error: string) => (
-                                <p className="mt-2 text-sm text-red-500" key={error}>
-                                    {error}
-                                </p>
-                            ))}
+                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                {error}
+                            </p>
+                        ))}
                     </div>
                 </div>
                 <div className='flex flex-col gap-5'>
@@ -120,13 +118,31 @@ export default function CreateRecipe() {
                         className='border border-gray-300 rounded-lg px-5 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent'
                     ></textarea>
                     <div id="instructions-error" aria-live="polite" aria-atomic="true">
-                         {/**@ts-ignore */}
+                        {/**@ts-ignore */}
                         {state?.errors?.instructions && state?.errors.instructions.map((error: string) => (
-                                <p className="mt-2 text-sm text-red-500" key={error}>
-                                    {error}
-                                </p>
-                            ))}
+                            <p className="mt-2 text-sm text-red-500" key={error}>
+                                {error}
+                            </p>
+                        ))}
                     </div>
+                </div>
+                <div className='flex flex-col gap-5'>
+                    <label htmlFor='image' className='font-bold text-gray-900'>
+                        Imagem
+                    </label>
+                    <input
+                        className="border border-gray-300 rounded-lg px-5 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        name='image'
+                        type='file' />
+                    { }
+                </div>
+                <div>
+                    {/**@ts-ignore */}
+                    {state?.message && (
+                        <p className="mt-2 text-sm text-red-500">
+                            {state.message}
+                        </p>
+                    )}
                 </div>
                 <div className="flex items-center">
                     <label htmlFor="isPublished" className='font-bold text-gray-900'>
