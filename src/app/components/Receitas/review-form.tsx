@@ -5,6 +5,14 @@ import { createReview } from '@/lib/recipeActions'
 import React from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { TailSpin } from 'react-loader-spinner'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 function Submit() {
     const { pending } = useFormStatus();
@@ -26,13 +34,18 @@ export default function ReviewForm({ recipeId }: { recipeId: string }) {
     return (
         <form action={dispatch}>
             <div className='flex flex-col gap-2'>
-                <select name='rating' className='w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent'>
-                    <option value="5">5 estrelas</option>
-                    <option value="4">4 estrelas</option>
-                    <option value="3">3 estrelas</option>
-                    <option value="2">2 estrelas</option>
-                    <option value="1">1 estrela</option>
-                </select>
+                <Select name='rating'>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Sua nota" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="5">5 estrelas</SelectItem>
+                        <SelectItem value="4">4 estrelas</SelectItem>
+                        <SelectItem value="3">3 estrelas</SelectItem>
+                        <SelectItem value="2">2 estrelas</SelectItem>
+                        <SelectItem value="1">1 estrelas</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <div id="rating-error" aria-live="polite" aria-atomic="true">
                     {/**@ts-ignore */}

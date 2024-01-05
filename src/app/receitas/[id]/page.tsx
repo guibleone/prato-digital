@@ -1,9 +1,12 @@
 import MaxWidthWrapper from '@/app/components/MaxWidthWrapper'
 import ReviewCard from '@/app/components/Receitas/review-card'
 import ReviewForm from '@/app/components/Receitas/review-form'
+import { Button } from '@/components/ui/button'
 import { fetchRecipeById, fetchRecipeLatestReviews } from '@/lib/data'
 import { formatDate } from '@/lib/utils'
+import { getServerSession } from 'next-auth'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export default async function SingleRecipe({ params }: { params: { id: string } }) {
@@ -11,6 +14,9 @@ export default async function SingleRecipe({ params }: { params: { id: string } 
 
     const recipe = await fetchRecipeById(id)
     const reviews = await fetchRecipeLatestReviews(id)
+
+    const session = await getServerSession()
+    const user = session?.user
 
     return (
         <section className='py-10 sm:py-20'>
@@ -55,17 +61,24 @@ export default async function SingleRecipe({ params }: { params: { id: string } 
 
                 <div className='mt-8'>
                     <h2 className='text-xl font-bold mb-3'>Deixe sua avaliação</h2>
-                    <ReviewForm recipeId={recipe?.id!} />
+
+                    {user ? (<ReviewForm recipeId={recipe?.id!} />) : (
+                        <Button asChild className='py-2 w-full'>
+                            <Link href='/api/auth/signin'>
+                                Faça login para avaliar
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 <div className='mt-8'>
                     <h2 className='text-xl font-bold'>Avaliações</h2>
 
                     {reviews?.length === 0 && (
-                            <p className='text-muted-foreground mt-2'>
-                                Ainda não há avaliações para esta receita
-                            </p>
-                        )}
+                        <p className='text-muted-foreground mt-2'>
+                            Ainda não há avaliações para esta receita
+                        </p>
+                    )}
 
                     <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-5'>
                         {reviews?.map((review) => (

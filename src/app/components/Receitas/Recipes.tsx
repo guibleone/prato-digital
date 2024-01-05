@@ -16,6 +16,12 @@ export default async function Recipes({
     return (
 
         <div className='grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+            {recipes?.length === 0 && (
+                <div className='text-center text-lg text-gray-500'>
+                    Nenhuma receita encontrada
+                </div>
+
+            )}
             {recipes?.map((recipe) => (
                 <CardRecipe key={recipe.id} recipe={recipe} />
             ))}
