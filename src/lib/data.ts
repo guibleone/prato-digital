@@ -93,11 +93,49 @@ const ITENS_PER_PAGE = 4;
 export async function fetchFilteredRecipes(
   query: string,
   currentPage: number,
+  isFavorite?: boolean,
 ) {
   noStore()
   const offset = (currentPage - 1) * ITENS_PER_PAGE;
 
   try {
+
+    if (isFavorite) {
+
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser) {
+        return null;
+      }
+      const recipes = await prisma.recipe.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+          ],
+          favorites: {
+            some: {
+              authorId: currentUser.id,
+            },
+          },
+        },
+        take: ITENS_PER_PAGE,
+        skip: offset,
+      });
+
+      return recipes;
+    }
+
     const recipes = await prisma.recipe.findMany({
       where: {
         OR: [
@@ -125,9 +163,46 @@ export async function fetchFilteredRecipes(
   }
 }
 
-export async function fetchRecipesPages(query: string) {
+export async function fetchRecipesPages(query: string, isFavorite?: boolean) {
   noStore()
   try {
+
+    if (isFavorite) {
+
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser) {
+        return null;
+      }
+
+      const recipesCount = await prisma.recipe.count({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+          ],
+          favorites: {
+            some: {
+              authorId: currentUser.id,
+            },
+          },
+        },
+      });
+
+      const totalPages = Math.ceil(recipesCount / ITENS_PER_PAGE);
+      return totalPages;
+    }
+
     const recipesCount = await prisma.recipe.count({
       where: {
         OR: [
@@ -207,6 +282,23 @@ export async function fetchRecipeLatestReviews(recipeId: string) {
     return reviews;
   }
   catch (error) {
+    return null;
+  }
+}
+
+export async function fetchReviews(recipeId: string) {
+  noStore()
+  try {
+    const countReviews = await prisma.rewiew.count({
+      where: {
+        recipeId,
+      },
+    });
+
+
+    return countReviews.toString();
+
+  } catch (error) {
     return null;
   }
 }

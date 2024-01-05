@@ -1,8 +1,10 @@
 import MaxWidthWrapper from '@/app/components/MaxWidthWrapper'
+import { FavoriteButton } from '@/app/components/Receitas/favorite-button'
 import ReviewCard from '@/app/components/Receitas/review-card'
 import ReviewForm from '@/app/components/Receitas/review-form'
 import { Button } from '@/components/ui/button'
 import { fetchRecipeById, fetchRecipeLatestReviews } from '@/lib/data'
+import { prisma } from '@/lib/db'
 import { formatDate } from '@/lib/utils'
 import { getServerSession } from 'next-auth'
 import Image from 'next/image'
@@ -18,14 +20,36 @@ export default async function SingleRecipe({ params }: { params: { id: string } 
     const session = await getServerSession()
     const user = session?.user
 
+    const currentUserId = await prisma.user
+        .findFirst({ where: { email: session?.user?.email! } })
+        .then((user) => user?.id!);
+
+    const isFavorite = await prisma.favorites.findFirst({
+        where: {
+            recipeId: id,
+            authorId: currentUserId,
+        },
+    });
+
     return (
         <section className='py-10 sm:py-20'>
             <MaxWidthWrapper className="max-w-screen-lg">
                 <div className='mb-8'>
                     <h1 className='text-2xl font-bold text-center'>{recipe?.title}</h1>
                 </div>
+    
                 <div className='flex justify-center'>
                     <Image className='rounded-lg shadow-xl' src={recipe?.image!} width={500} height={200} alt={recipe?.title!} />
+                </div>
+                <div className='flex justify-end py-5'>
+                    {!user ? (
+                        <Button asChild className='py-2'>
+                            <Link href='/api/auth/signin'>
+                                Faça login para favoritar
+                            </Link>
+                        </Button>
+                    ) :  <FavoriteButton recipeId={recipe?.id!} isFavorite={!!isFavorite} />}
+                   
                 </div>
                 <div className='mt-8'>
                     <h2 className='text-xl font-bold'>Descrição</h2>

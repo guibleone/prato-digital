@@ -55,7 +55,7 @@ export default function ReviewForm({ recipeId }: { recipeId: string }) {
                         </p>
                     ))}
                 </div>
-                <input name='text' className='w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent' type="text" placeholder='Deixe um comentário' />
+                <textarea name='text' className='w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-transparent' placeholder='Deixe um comentário' />
                 <div id="text-error" aria-live="polite" aria-atomic="true">
                     {/**@ts-ignore */}
                     {state?.errors?.text && state?.errors.text.map((error: string) => (

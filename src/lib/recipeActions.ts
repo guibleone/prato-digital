@@ -294,3 +294,75 @@ export const createReview = async (recipeId: string, prevState: ReviewState, for
     revalidatePath(`/receitas/${recipeId}`);
     redirect(`/receitas/${recipeId}`);
 }
+
+
+// adicionar receita aos favoritos
+
+export const addToFavorites = async (recipeId: string) => {
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser?.id || !currentUser?.email) {
+        return {
+            errors: {
+                message: 'User not found. Falha ao criar receita.',
+            }
+        };
+    }
+
+    try {
+
+        await prisma.favorites.create({
+            data: {
+                authorId: currentUser.id,
+                recipeId: recipeId,
+            }
+        });
+
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        return {
+            message: 'Database Error: Falha ao criar receita.',
+        };
+    }
+
+    revalidatePath(`/receitas/${recipeId}`);
+    redirect(`/receitas/${recipeId}`);
+}
+
+// remover receita dos favoritos
+export const removeFromFavorites = async (recipeId: string) => {
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser?.id || !currentUser?.email) {
+        return {
+            errors: {
+                message: 'User not found. Falha ao criar receita.',
+            }
+        };
+    }
+
+    try {
+
+        await prisma.favorites.delete({
+            where:{
+               recipeId_authorId:{
+                     recipeId: recipeId,
+                     authorId: currentUser.id,
+                }
+            }
+          
+        });
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        return {
+            message: 'Database Error: Falha ao criar receita.',
+        };
+    }
+
+    revalidatePath(`/receitas/${recipeId}`);
+    redirect(`/receitas/${recipeId}`);
+}

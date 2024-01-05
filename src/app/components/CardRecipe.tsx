@@ -1,6 +1,8 @@
+
 import { Recipe } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import CardReviews from "./Receitas/card-reviwes";
 
 export default function CardRecipe({ recipe }: { recipe: Recipe }) {
   return (
@@ -18,12 +20,7 @@ export default function CardRecipe({ recipe }: { recipe: Recipe }) {
           </p>
           <div className="flex gap-4 mt-4">
             <div className="flex gap-2 items-center">
-              <svg className="w-4 h-4 text-yellow-500" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M12 2l3.09 6.89L22 9.3l-5 4.87 1.18 6.88L12 17.77l-6.18 3.28L7 14.17l-5-4.87 6.91-.41L12 2z" />
-              </svg>
-              <span className="text-sm text-muted-foreground">
-                <span className="font-bold">4.8</span> (200 avaliações)
-              </span>
+              <CardReviews recipeId={recipe.id} />
             </div>
           </div>
         </div>
