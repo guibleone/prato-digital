@@ -2,9 +2,23 @@
 import { X } from "lucide-react"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { createRecipe } from "@/lib/recipeActions";
 import { Button } from "@/components/ui/button";
+import { TailSpin } from "react-loader-spinner";
+
+
+
+function Submit() {
+    const { pending } = useFormStatus();
+    return (
+        <Button className='py-2' type="submit" disabled={pending}>
+            {pending ? <TailSpin height={20} width={20} color='black' /> : <>
+                Criar
+            </>}
+        </Button>
+    );
+}
 
 export default function CreateRecipe() {
     const initialState = { message: null, errors: {} };
@@ -153,9 +167,7 @@ export default function CreateRecipe() {
                 </div>
             </div>
             <div>
-                <Button type='submit'>
-                    Criar Receita
-                </Button>
+                <Submit />
             </div>
         </form>
     )

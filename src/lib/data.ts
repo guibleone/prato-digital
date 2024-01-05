@@ -155,3 +155,58 @@ export async function fetchRecipesPages(query: string) {
     return null;
   }
 }
+
+// PEGAR AVALIAÇÕES DE UMA RECEITA
+
+export async function fetchRecipeReviews(recipeId: string) {
+  noStore()
+  try {
+
+    const reviews = await prisma.rewiew.findMany({
+      where: {
+        recipeId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    return reviews;
+  }
+  catch (error) {
+    return null;
+  }
+}
+
+export async function fetchRecipeLatestReviews(recipeId: string) {
+  noStore()
+  try {
+
+    const reviews = await prisma.rewiew.findMany({
+      where: {
+        recipeId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 6,
+    })
+    return reviews;
+  }
+  catch (error) {
+    return null;
+  }
+}

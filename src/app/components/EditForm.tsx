@@ -1,14 +1,26 @@
 'use client'
 
-import { X } from "lucide-react"
+import { Edit, X } from "lucide-react"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Recipe } from "@prisma/client";
 import { editRecipe } from "@/lib/recipeActions";
 import Image from "next/image";
+import { TailSpin } from 'react-loader-spinner'
 
+function Submit() {
+    const { pending } = useFormStatus();
+    return (
+        <Button className='py-2' type="submit" disabled={pending}>
+            {pending ? <TailSpin color='black' /> : <>
+                <Edit className='mr-2' size={20} />
+                Editar
+            </>}
+        </Button>
+    );
+}
 
 export default function EditForm({ recipe }: { recipe: Recipe | null }) {
 
@@ -155,9 +167,7 @@ export default function EditForm({ recipe }: { recipe: Recipe | null }) {
                 </div>
             </div>
             <div>
-                <Button type='submit'>
-                    Editar Receita
-                </Button>
+                <Submit />
             </div>
         </form>
     )

@@ -29,6 +29,11 @@ export default async function RecipesDashboard() {
                     </Link>
                 </Button>
             </div>
+            {recipes?.length === 0 && (
+                <p className='text-muted-foreground'>
+                    Você ainda não possui nenhuma receita
+                </p>
+            )}
             <div className='grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 sm:px-0'>
                 {recipes?.map((recipe: any) => (
                     <CardRecipeDashboard key={recipe.id} recipe={recipe} />

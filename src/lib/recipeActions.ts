@@ -37,7 +37,7 @@ export async function createRecipe(prevState: State, formData: FormData) {
     const isPublished = formData.get('isPublished') === 'on' ? true : false;
     const image = formData.get('image') as File;
 
-    if(!image) {
+    if (!image) {
         return {
             errors: {
                 message: 'Imagem não encontrada. Falha ao criar receita.',
@@ -71,7 +71,7 @@ export async function createRecipe(prevState: State, formData: FormData) {
                 title,
                 description,
                 ingredients,
-                instructions: instructions.split('\n'),
+                instructions,
                 isPublished,
                 authorId: currentUser.id,
             }
@@ -142,7 +142,7 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
                 title,
                 description,
                 ingredients,
-                instructions: instructions.split('\n'),
+                instructions,
                 isPublished,
                 image: url ? url as string : null,
             }
@@ -164,14 +164,16 @@ export async function editRecipe(recipeId: string, prevState: State, formData: F
 
 export async function deleteRecipe(recipeId: string) {
     try {
-        const storageRef = ref(storage, `images/${recipeId}`);
-        await deleteObject(storageRef);
 
         await prisma.recipe.delete({
             where: {
                 id: recipeId,
             },
         });
+
+        const storageRef = ref(storage, `images/${recipeId}`);
+        await deleteObject(storageRef);
+
     } catch (error) {
         console.error('Database Error:', error);
         return {
@@ -200,4 +202,95 @@ export const uploadImage = async (image: File, recipeId: string) => {
     }
 
 
+}
+
+// deixar uma avaliação na receita
+
+const ReviewSchema = z.object({
+    rating: z.string().min(1, { message: "Rating deve ter no mínimo 1 caracteres" }),
+    text: z.string().min(5, { message: "Texto deve ter no mínimo 5 caracteres" }).max(100, { message: "Texto deve ter no máximo 100 caracteres" })
+})
+
+export type ReviewState = {
+    errors?: {
+        rating?: string[],
+        text?: string[],
+    },
+    successMessage?: string | null,
+    message?: string | null
+}
+
+export const createReview = async (recipeId: string, prevState: ReviewState, formData: FormData) => {
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser?.id || !currentUser?.email) {
+        return {
+            errors: {
+                message: 'User not found. Falha ao criar receita.',
+            }
+        };
+    }
+
+    const validatedFields = ReviewSchema.safeParse({
+        rating: formData.get("rating"),
+        text: formData.get("text"),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Falha ao criar receita.',
+        };
+    }
+
+    const { rating, text } = validatedFields.data;
+
+    try {
+
+        const review = await prisma.rewiew.create({
+            data: {
+                rating: parseInt(rating),
+                text,
+                authorId: currentUser.id,
+                recipeId: recipeId,
+            }
+        });
+
+        await prisma.recipe.update({
+            where: {
+                id: recipeId,
+            },
+            data: {
+                reviews: {
+                    connect: {
+                        id: review.id,
+                    }
+                }
+            }
+        });
+
+        await prisma.user.update({
+            where: {
+                id: currentUser.id,
+            },
+            data: {
+                reviews: {
+                    connect: {
+                        id: review.id,
+                    }
+                }
+            }
+        });
+
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        return {
+            message: 'Database Error: Falha ao criar receita.',
+        };
+    }
+
+    revalidatePath(`/receitas/${recipeId}`);
+    redirect(`/receitas/${recipeId}`);
 }
