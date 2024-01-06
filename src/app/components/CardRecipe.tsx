@@ -19,9 +19,6 @@ export default function CardRecipe({ recipe }: { recipe: Recipe }) {
             {recipe?.description?.length! > 100 ? recipe.description?.slice(0, 100) + '...' : recipe.description}
           </p>
           <div className="flex gap-4 mt-4">
-            <div className="flex gap-2 items-center">
-              <CardReviews recipeId={recipe.id} />
-            </div>
           </div>
         </div>
       </Link>
